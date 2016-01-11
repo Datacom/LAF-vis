@@ -1,5 +1,6 @@
 var moneyTitle = d3.format('$,');
 var moneyAxis = d3.format('$s');
+var filterCouncilsFunc;
 
 d3
 .csv('data/LAF_14-09.csv')//year,council,income,activity,val
@@ -69,7 +70,20 @@ $('#bloodhound .typeahead').typeahead({
 {
     name: 'councilsSearch',
     source: councilsSearch
+}).on('keyup', this, function (event) {
+    if (event.keyCode == 13) {
+        filterCouncilsFunc();
+    }
+
 });
+
+filterCouncilsFunc = function filterCouncils(){
+    var val = $('#bloodhound .tt-input').val();
+    if (councilNames.indexOf(val) >= 0){
+        charts.council.filter(val).redrawGroup();
+    }
+    $('.typeahead').typeahead('val', '');
+};
 
 
 /********************************************************************************YEAR CHART*/
