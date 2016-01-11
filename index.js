@@ -2,6 +2,7 @@ var moneyTitle = d3.format('$,');
 var moneyAxis = d3.format('$s');
 var filterCouncilsFunc;
 
+
 d3
 .csv('data/LAF_14-09.csv')//year,council,income,activity,val
 .row(function(d) {
@@ -30,9 +31,52 @@ d3
     .dimension(council_dim)
     .group(council_group)
     .height(600)
-    .cap(19)
     .colors(d3.scale.category20())
-    .ordering(function(d) {return -d.value;})
+    .data(function(group) {
+        var data = group.all().reduce(function(obj, d) {
+            obj[d.key] = d.value;
+            return obj;
+        },{});
+
+        var currentTop = group.top(19);//.map(dc.pluck('key'));
+        var currentTopCouncils = group.top(19).map(dc.pluck('key'));
+        var currentFilters = charts.council.filters();
+
+        var output = [];
+        // Map current filters to data row
+        currentFilters.forEach(function(council){
+            output.push({key: council, value: data[council]});
+            delete data[council];
+        });
+        //debugger;
+        output.sort(function(a, b){
+            return b.value - a.value;
+        });
+        //Order curent filters
+        //Append to output
+        //Append currrentTop unless already added or 19 excedded to output
+        currentTop.forEach(function(d){
+            if(output.length<19 && data[d.key]) {
+                output.push(d);
+                delete data[d.key];
+            }
+        });
+        // data = data.filter(function(d) {return currentTopCouncils.indexOf(d.key)===-1;});
+
+        output.push({
+            key: 'Others',
+            value: Object.keys(data).reduce(function(prev, key) {return prev+data[key];}, 0),
+            others: Object.keys(data)
+        });
+
+        return output;
+    })
+    .ordering(function(d) {
+        // if(charts.council.filters().indexOf(d.key) >= 0){
+        //     return -d.value -99999999999999;
+        // }
+        return -d.value;
+    })
     .title(function(d) {return d.key+": "+moneyTitle(d.value);})
     .elasticX(true)
     .valueAccessor(function(d) {
