@@ -99,6 +99,16 @@ d3
     .title(function(d) {return d.key+": "+moneyTitle(d.value);});
   charts.activity.xAxis().tickFormat(moneyAxis);
 
+  for(var key in charts) {
+    var chart = charts[key];
+    chart.width(function(root) {
+      var width = root.getBoundingClientRect().width;
+      var paddingLeft = Number(getComputedStyle(root).paddingLeft.slice(0,-2));
+      var paddingRight = Number(getComputedStyle(root).paddingRight.slice(0,-2));
+      return width-paddingLeft-paddingRight;
+    });
+  }
+
   dc.disableTransitions = true;
   dc.renderAll();
   dc.disableTransitions = false;
