@@ -2,7 +2,7 @@ var moneyTitle = d3.format('$,');
 var moneyAxis = d3.format('$s');
 
 d3
-.csv('data/LAF_14-09.csv')
+.csv('data/LAF_14-09.csv')//year,council,income,activity,val
 .row(function(d) {
   d.val = Number(d.val)*1000;
   d.year = Number(d.year);
@@ -11,22 +11,24 @@ d3
 .get(function(error, data) {
   var ndx = new crossfilter(data);
   charts = {};
-
-  dataCount = dc.dataCount('#dataCount')
-    .dimension(ndx)
-    .group(ndx.groupAll())
-    .html({
+/*******************************************************************************HEADER*/
+  dc.dataCount('#dataCount').options({
+    dimension: ndx,
+    group: ndx.groupAll(),
+    html: {
       some: '<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
           ' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'\'>Reset All</a>',
       all: 'All records selected. Please click on the graph to apply filters.'
-    });
+    }
+  });
 
+/*******************************************************************************COUNCIL CHART*/
   var council_dim = ndx.dimension(dc.pluck('council'));
   var council_group = council_dim.group().reduceSum(dc.pluck('val'));
   charts.council = dc.rowChart('#councilChart')
     .dimension(council_dim)
     .group(council_group)
-    .height(602.5)
+    .height(600)
     .cap(19)
     .colors(d3.scale.category20())
     .ordering(function(d) {return -d.value;})
@@ -46,6 +48,31 @@ d3
   };
   charts.council.xAxis().ticks(5).tickFormat(moneyAxis);
 
+  /*****************************************************************************COUNCIL BLOODHOUND SEARCH*/
+  // var countryVals = country_dim.group().all().map(function(d) {return d.key;});
+  var councilNames = council_dim.group().all().map(function(d) {return d.key;});
+
+
+
+councilsSearch = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.whitespace,
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+
+    local: councilNames
+});
+
+$('#bloodhound .typeahead').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 2
+},
+{
+    name: 'councilsSearch',
+    source: councilsSearch
+});
+
+
+/********************************************************************************YEAR CHART*/
   var year_dim = ndx.dimension(dc.pluck('year'));
   var year_group = year_dim.group().reduceSum(dc.pluck('val'));
   charts.year = dc.barChart('#yearChart')
@@ -79,22 +106,23 @@ d3
   };
   charts.year.yAxis().tickFormat(moneyAxis).ticks(5);
 
+
+/*******************************************************************************INCOME*/
   var income_dim = ndx.dimension(dc.pluck('income'));
   var income_group = income_dim.group().reduceSum(dc.pluck('val'));
   charts.income = dc.rowChart('#incomeChart')
     .dimension(income_dim)
     .group(income_group)
-    .elasticX(true)
     .height(400)
     .title(function(d) {return d.key+": "+moneyTitle(d.value);});
   charts.income.xAxis().tickFormat(moneyAxis);
 
+/*******************************************************************************ACTIVITY CHART*/
   var activity_dim = ndx.dimension(dc.pluck('activity'));
   var activity_group = activity_dim.group().reduceSum(dc.pluck('val'));
   charts.activity = dc.rowChart('#activityChart')
     .dimension(activity_dim)
     .group(activity_group)
-    .elasticX(true)
     .height(400)
     .title(function(d) {return d.key+": "+moneyTitle(d.value);});
   charts.activity.xAxis().tickFormat(moneyAxis);
@@ -112,4 +140,5 @@ d3
   dc.disableTransitions = true;
   dc.renderAll();
   dc.disableTransitions = false;
+
 });
