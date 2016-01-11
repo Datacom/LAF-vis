@@ -9,5 +9,12 @@
 }
 
 div.dc-chart {
-     float: none; 
+     float: none;
+}
+
+legend {
+  width: 100%;
+}
+.reset {
+  float:right;
 }

@@ -10,7 +10,7 @@ d3
 })
 .get(function(error, data) {
   var ndx = new crossfilter(data);
-  var charts = {};
+  charts = {};
 
   dataCount = dc.dataCount('#dataCount')
     .dimension(ndx)
