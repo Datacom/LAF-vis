@@ -1,0 +1,13 @@
+.dc-chart g.row text {
+  fill: black
+}
+
+
+#councilChart > svg > g > g:last-child > rect {
+  mask: url(#fade);
+  stroke: black;
+}
+
+div.dc-chart {
+     float: none; 
+}
