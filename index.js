@@ -167,15 +167,38 @@ filterCouncilsFunc = function filterCouncils(){
 
 
 /*******************************************************************************INCOME*/
-  var income_dim = ndx.dimension(dc.pluck('income'));
-  var income_group = income_dim.group().reduceSum(dc.pluck('val'));
-  charts.income = dc.rowChart('#incomeChart')
-    .dimension(income_dim)
-    .group(income_group)
-    .elasticX(true)
-    .height(400)
-    .title(function(d) {return d.key+": "+moneyTitle(d.value);});
-  charts.income.xAxis().tickFormat(moneyAxis);
+var income = [
+  'Rates',
+  'Regulatory income and petrol tax',
+  'Current grants, subsidies, and donations income',
+  'Interest income',
+  'Dividend income',
+  'Sales and other operating income'
+];
+var expenditure = [
+  'Employee costs',
+  'Depreciation and amortisation',
+  'Current grants, subsidies, and donations expenditure',
+  'Interest expenditure',
+  'Purchases and other operating expenditure',
+  'Total operating expenditure'
+];
+  var income_expenditure_dim = ndx.dimension(dc.pluck('income'));
+  var income_expenditure_group = income_expenditure_dim.group().reduceSum(dc.pluck('val'));
+  charts.income_expenditure = splitRowChart([
+    '#incomeChart',
+    '#expendiutreChart'
+  ], function(d) {
+    if(income.indexOf(d.key)!==-1) return 0;
+    else if(expenditure.indexOf(d.key)!==-1) return 1;
+    else return 2;
+  }, '#incomeExpenditureReset').options({
+    dimension: income_expenditure_dim,
+    group: income_expenditure_group,
+    elasticX: true,
+    height: 200,
+    title: function(d) {return d.key+": "+moneyTitle(d.value);}
+  }).apply(function(chart) { chart.xAxis().tickFormat(moneyAxis).ticks(5); });
 
 /*******************************************************************************ACTIVITY CHART*/
   var activity_dim = ndx.dimension(dc.pluck('activity'));
@@ -190,12 +213,24 @@ filterCouncilsFunc = function filterCouncils(){
 
   for(var key in charts) {
     var chart = charts[key];
-    chart.width(function(root) {
-      var width = root.getBoundingClientRect().width;
-      var paddingLeft = Number(getComputedStyle(root).paddingLeft.slice(0,-2));
-      var paddingRight = Number(getComputedStyle(root).paddingRight.slice(0,-2));
-      return width-paddingLeft-paddingRight;
-    });
+    if(Array.isArray(chart)) {
+      chart.apply(function(chart) {
+        chart.width(function(root) {
+          var width = root.getBoundingClientRect().width;
+          var paddingLeft = Number(getComputedStyle(root).paddingLeft.slice(0,-2));
+          var paddingRight = Number(getComputedStyle(root).paddingRight.slice(0,-2));
+          return width-paddingLeft-paddingRight;
+        });
+      });
+    } else {
+      console.log(chart);
+      chart.width(function(root) {
+        var width = root.getBoundingClientRect().width;
+        var paddingLeft = Number(getComputedStyle(root).paddingLeft.slice(0,-2));
+        var paddingRight = Number(getComputedStyle(root).paddingRight.slice(0,-2));
+        return width-paddingLeft-paddingRight;
+      });
+    }
   }
 
   dc.disableTransitions = true;
