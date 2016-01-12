@@ -55,7 +55,7 @@ d3
         //Order curent filters
         //Append to output
         //Append currrentTop unless already added or 19 excedded to output
-        
+
         currentTop.forEach(function(d){
             if(output.length<19 && data[d.key]) {
                 output.push(d);
@@ -172,6 +172,7 @@ filterCouncilsFunc = function filterCouncils(){
   charts.income = dc.rowChart('#incomeChart')
     .dimension(income_dim)
     .group(income_group)
+    .elasticX(true)
     .height(400)
     .title(function(d) {return d.key+": "+moneyTitle(d.value);});
   charts.income.xAxis().tickFormat(moneyAxis);
@@ -182,6 +183,7 @@ filterCouncilsFunc = function filterCouncils(){
   charts.activity = dc.rowChart('#activityChart')
     .dimension(activity_dim)
     .group(activity_group)
+    .elasticX(true)
     .height(400)
     .title(function(d) {return d.key+": "+moneyTitle(d.value);});
   charts.activity.xAxis().tickFormat(moneyAxis);
