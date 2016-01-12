@@ -2,10 +2,8 @@
   fill: black
 }
 
-
-#councilChart > svg > g > g:last-child > rect {
-  mask: url(#fade);
-  stroke: black;
+#activityChart rect {
+    stroke: grey;
 }
 
 div.dc-chart {
@@ -19,10 +17,6 @@ legend {
   float:right;
 }
 
-div#bloodhound {
-    display: inline;
-    margin-left: 2rem;
-}
 .tt-query {
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
      -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);

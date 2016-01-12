@@ -18,41 +18,50 @@
   <!--typeahaed-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/0.11.1/typeahead.bundle.min.js"></script>
 
-
   <link rel="stylesheet" href="index.css" />
   <script src="splitChart.js"></script>
+  <script src="pyramid-chart.js"></script>
   <script src="index.js"></script>
 </head>
 <body>
   <svg width="0" height="0" style="float:left">
     <defs>
-      <linearGradient id="Gradient">
+      <linearGradient id="positiveGradient">
         <stop offset="0" stop-color="white" stop-opacity="1" />
         <stop offset="0.8" stop-color="white" stop-opacity="1" />
         <stop offset="1" stop-color="white" stop-opacity="0" />
       </linearGradient>
-      <mask id="fade" maskContentUnits="objectBoundingBox">
-        <rect width="1" height="1" fill="url(#Gradient)"  />
+      <linearGradient id="negativeGradient">
+        <stop offset="0" stop-color="white" stop-opacity="0" />
+        <stop offset="1" stop-color="white" stop-opacity="1" />
+      </linearGradient>
+      <mask id="positiveFade" maskContentUnits="objectBoundingBox">
+        <rect width="1" height="1" fill="url(#positiveGradient)"  />
+      </mask>
+      <mask id="negativeFade" maskContentUnits="objectBoundingBox">
+        <rect width="1" height="1" fill="url(#negativeGradient)"  />
       </mask>
     </defs>
   </svg>
   <div class="row">
     <div id="dataCount" class="col-xs-12"></div>
     <div class="col-xs-3">
-      <div id="yearChart"></div>
+      <div id="yearChart"><legend>Year (showing Income-Expenditure)</legend></div>
       <div id="councilChart">
-        <legend>Local Authorities<div id="bloodhound" class="input-group">
+        <legend>Local Authorities (showing Income-Expenditure)<a href="javascript:charts.council.filterAll();charts.council.redrawGroup();" class="reset" style="display:none">Reset</a><div id="bloodhound" class="input-group">
             <input class="typeahead form-control" type="text" placeholder = "Name">
             <input id ="councilSearch" type = "button" value = "Filter" onclick = "javascript:filterCouncilsFunc();">
-        </div><a href="javascript:charts.council.filterAll();charts.council.redrawGroup();" class="reset" style="display:none">Reset</a></legend>
+        </div></legend>
       </div>
     </div>
-    <div class="col-xs-3">
-      <div id="incomeChart"><legend>Income</legend></div>
-      <div id="expendiutreChart"><legend>Expenditure</legend></div>
+    <div class="col-xs-4">
+      <div class="row">
+        <div id="incomeChart" class="col-xs-6"><legend>Income</legend></div>
+        <div id="expendiutreChart" class="col-xs-6"><legend>Expenditure</legend></div>
+      </div>
+      <div id="activityChart" class="col-xs-12"></div>
     </div>
 
-    <div id="activityChart" class="col-xs-3"></div>
   </div>
 </body>
 </html>

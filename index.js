@@ -2,16 +2,39 @@ var moneyTitle = d3.format('$,');
 var moneyAxis = d3.format('$s');
 var filterCouncilsFunc;
 
+var income = [
+  'Rates',
+  'Regulatory income and petrol tax',
+  'Current grants, subsidies, and donations income',
+  'Interest income',
+  'Dividend income',
+  'Sales and other operating income'
+];
+var expenditure = [
+  'Employee costs',
+  'Depreciation and amortisation',
+  'Current grants, subsidies, and donations expenditure',
+  'Interest expenditure',
+  'Purchases and other operating expenditure'
+];
 
 d3
 .csv('data/LAF_14-09.csv')//year,council,income,activity,val
 .row(function(d) {
   d.val = Number(d.val)*1000;
   d.year = Number(d.year);
+
+  d.stream = d.income; //stream of income/expenditure
+  delete d.income;
+
+  d.type = "Other";
+  if(income.indexOf(d.stream) !== -1) d.type="Income";
+  else if(expenditure.indexOf(d.stream) !== -1) d.type="Expenditure";
+
   return d;
 })
 .get(function(error, data) {
-  var ndx = new crossfilter(data);
+  var ndx = new crossfilter(data.filter(function(d) {return d.type !== "Other";}));
   charts = {};
 /*******************************************************************************HEADER*/
   dc.dataCount('#dataCount').options({
@@ -26,7 +49,12 @@ d3
 
 /*******************************************************************************COUNCIL CHART*/
   var council_dim = ndx.dimension(dc.pluck('council'));
-  var council_group = council_dim.group().reduceSum(dc.pluck('val'));
+  var council_group = council_dim.group().reduceSum(
+    function(d) {
+      if(d.type === "Income") return d.val;
+      else return -d.val;
+    }
+  );
   charts.council = dc.rowChart('#councilChart')
     .dimension(council_dim)
     .group(council_group)
@@ -48,7 +76,7 @@ d3
             output.push({key: council, value: data[council]});
             delete data[council];
         });
-        //debugger;
+
         output.sort(function(a, b){
             return b.value - a.value;
         });
@@ -63,33 +91,46 @@ d3
             }
         });
         // data = data.filter(function(d) {return currentTopCouncils.indexOf(d.key)===-1;});
-
-        output.push({
-            key: 'Others',
-            value: Object.keys(data).reduce(function(prev, key) {return prev+data[key];}, 0),
-            others: Object.keys(data)
-        });
+        if(Object.keys(data).length > 0) {
+          output.push({
+              key: 'Others',
+              value: Object.keys(data).reduce(function(prev, key) {return prev+data[key];}, 0),
+              others: Object.keys(data)
+          });
+        }
 
         return output;
     })
-    .ordering(function(d) {
-        // if(charts.council.filters().indexOf(d.key) >= 0){
-        //     return -d.value -99999999999999;
-        // }
-        return -d.value;
-    })
+    // .ordering(function(d) {
+    //     // if(charts.council.filters().indexOf(d.key) >= 0){
+    //     //     return -d.value -99999999999999;
+    //     // }
+    //     return d.value;
+    // })
     .title(function(d) {return d.key+": "+moneyTitle(d.value);})
     .elasticX(true)
     .valueAccessor(function(d) {
       if(d.others) {
-        return council_group.top(1)[0].value + charts.council.x().invert(charts.council.margins().right/2);
+        if(d.value<0) {
+          var min = d3.min(charts.council.data().slice(0,-1),dc.pluck('value'));
+          if(min < 0) return min;
+          else return d.value/25;
+        }
+        else return council_group.top(1)[0].value + charts.council.x().invert(charts.council.margins().right/2);
       }
       return d.value;
+    }).on('pretransition', function(chart) {
+      chart.root().selectAll('rect').filter(
+        function(d) {
+          return d.key==="Others";}
+      ).style({
+        mask: function(d) {
+            return (d.value<0)? "url(#negativeFade)" : "url(#posiveFade)";
+        },
+        stroke: 'black'
+      });
     });
   charts.council.cappedValueAccessor = function(d, i) {
-    if (d.others) {
-      return council_group.top(1)[0].value;
-    }
     return charts.council.valueAccessor()(d, i);
   };
   charts.council.xAxis().ticks(5).tickFormat(moneyAxis);
@@ -133,7 +174,12 @@ filterCouncilsFunc = function filterCouncils(){
 
 /********************************************************************************YEAR CHART*/
   var year_dim = ndx.dimension(dc.pluck('year'));
-  var year_group = year_dim.group().reduceSum(dc.pluck('val'));
+  var year_group = year_dim.group().reduceSum(
+    function(d) {
+      if(d.type === "Income") return d.val;
+      else return -d.val;
+    }
+  );
   charts.year = dc.barChart('#yearChart')
     .dimension(year_dim)
     .group(year_group)
@@ -167,31 +213,13 @@ filterCouncilsFunc = function filterCouncils(){
 
 
 /*******************************************************************************INCOME*/
-var income = [
-  'Rates',
-  'Regulatory income and petrol tax',
-  'Current grants, subsidies, and donations income',
-  'Interest income',
-  'Dividend income',
-  'Sales and other operating income'
-];
-var expenditure = [
-  'Employee costs',
-  'Depreciation and amortisation',
-  'Current grants, subsidies, and donations expenditure',
-  'Interest expenditure',
-  'Purchases and other operating expenditure',
-  'Total operating expenditure'
-];
-  var income_expenditure_dim = ndx.dimension(dc.pluck('income'));
+  var income_expenditure_dim = ndx.dimension(dc.pluck('stream'));
   var income_expenditure_group = income_expenditure_dim.group().reduceSum(dc.pluck('val'));
   charts.income_expenditure = splitRowChart([
     '#incomeChart',
     '#expendiutreChart'
   ], function(d) {
-    if(income.indexOf(d.key)!==-1) return 0;
-    else if(expenditure.indexOf(d.key)!==-1) return 1;
-    else return 2;
+    return (income.indexOf(d.key) !== -1) ? 0 : 1;
   }, '#incomeExpenditureReset').options({
     dimension: income_expenditure_dim,
     group: income_expenditure_group,
@@ -201,12 +229,20 @@ var expenditure = [
   }).apply(function(chart) { chart.xAxis().tickFormat(moneyAxis).ticks(5); });
 
 /*******************************************************************************ACTIVITY CHART*/
-  var activity_dim = ndx.dimension(dc.pluck('activity'));
+  var activity_dim = ndx.dimension(function(d) {
+    return [d.type, d.activity];
+  });
   var activity_group = activity_dim.group().reduceSum(dc.pluck('val'));
-  charts.activity = dc.rowChart('#activityChart')
+  charts.activity = dc.pyramidChart('#activityChart')
     .dimension(activity_dim)
     .group(activity_group)
     .elasticX(true)
+    .leftColumn(function(d){return d.key[0] == 'Income';})
+    .rowAccessor(function(d){return d.key[1];})
+    .rowOrdering(d3.ascending)
+    .colorAccessor(function(d) {return d.key[1];})
+    .twoLabels(false)
+    .columnLabels(['Income','Expenditure'])
     .height(400)
     .title(function(d) {return d.key+": "+moneyTitle(d.value);});
   charts.activity.xAxis().tickFormat(moneyAxis);
@@ -223,7 +259,6 @@ var expenditure = [
         });
       });
     } else {
-      console.log(chart);
       chart.width(function(root) {
         var width = root.getBoundingClientRect().width;
         var paddingLeft = Number(getComputedStyle(root).paddingLeft.slice(0,-2));
