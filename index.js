@@ -55,6 +55,7 @@ d3
         //Order curent filters
         //Append to output
         //Append currrentTop unless already added or 19 excedded to output
+        
         currentTop.forEach(function(d){
             if(output.length<19 && data[d.key]) {
                 output.push(d);

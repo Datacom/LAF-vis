@@ -40,18 +40,15 @@
     <div class="col-xs-3">
       <div id="yearChart"></div>
       <div id="councilChart">
-        <legend>Local Authorities<a href="javascript:charts.council.filterAll();charts.council.redrawGroup();" class="reset" style="display:none">Reset</a></legend>
+        <legend>Local Authorities<div id="bloodhound" class="input-group">
+            <input class="typeahead form-control" type="text" placeholder = "Name">
+            <input id ="councilSearch" type = "button" value = "Filter" onclick = "javascript:filterCouncilsFunc();">
+        </div><a href="javascript:charts.council.filterAll();charts.council.redrawGroup();" class="reset" style="display:none">Reset</a></legend>
       </div>
     </div>
     <div class="col-xs-3">
       <div id="incomeChart"></div>
       <div id="activityChart"></div>
-    </div>
-  </div>
-  <div class = "row">
-    <div id="bloodhound" class="input-group">
-        <input class="typeahead form-control" type="text" placeholder = "Name">
-        <input id ="councilSearch" type = "button" value = "Filter" onclick = "javascript:filterCouncilsFunc();">
     </div>
   </div>
 </body>
