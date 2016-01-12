@@ -2,6 +2,10 @@ var moneyTitle = d3.format('$,');
 var moneyAxis = d3.format('$s');
 var filterCouncilsFunc;
 
+var oldString = "            if (extent[0] > 0) {\n                extent[0] = 0;\n            }";
+var fixedRowChart = dc.rowChart.toString().replace(oldString,oldString+"if(extent[1]<0) {extent[1]=0;}");
+dc.rowChart = eval('('+fixedRowChart+")");
+
 var income = [
   'Rates',
   'Regulatory income and petrol tax',
