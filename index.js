@@ -41,6 +41,7 @@ d3
   _data = data.filter(function(d) {return d.type !== "Other";});
   var ndx = new crossfilter(_data);
   charts = {};
+
 /*******************************************************************************HEADER*/
   dc.dataCount('#dataCount').options({
     dimension: ndx,
@@ -90,9 +91,7 @@ d3
         //Order curent filters
         //Append to output
         //Append currrentTop unless already added or 19 excedded to output
-        console.log(currentTop, output)
         currentTop.forEach(function(d){
-            console.log(data[d.key]);
             if(output.length<19 && data[d.key]!==undefined) {
                 output.push(d);
                 delete data[d.key];
@@ -258,12 +257,53 @@ filterCouncilsFunc = function filterCouncils(){
     .title(function(d) {return d.key+": "+moneyTitle(d.value);});
   charts.activity.xAxis().tickFormat(moneyAxis);
 
+
+  (function() {
+    var nodes = income.concat(expenditure).concat(
+      charts.activity.group().all().reduce(function(arr, ele) {
+        if(arr.indexOf(ele.key[1])===-1) {
+          arr.push(ele.key[1]);
+        }
+        return arr;
+      }, [])
+    ).map(function(name) {return {name: name};});
+    var sankeyDim = ndx.dimension(dc.pluck('stream'));
+    var sankeyGroup = sankeyDim.group().reduce(
+      function(p,v) {
+        p[v.activity] = (p[v.activity] || 0) + v.val;
+        return p;
+      },
+      function(p,v) {
+        p[v.activity] -= v.val;
+        return p;
+      },
+      function() {
+        return {};
+      }
+    );
+    testChart = dc.sankeyChart('#test').dimension(sankeyDim).group(sankeyGroup).data(function(group) {
+      return {
+        nodes: nodes,
+        links: group.all().reduce(function(links, d) {
+          var isIncome = income.indexOf(d.key) !== -1;
+          for(var activity in d.value) {
+            var activityNode = nodes.map(dc.pluck('name')).indexOf(activity);
+            var streamNode = nodes.map(dc.pluck('name')).indexOf(d.key);
+            if(isIncome) links.push({source: streamNode, target: activityNode, value: d.value[activity]});
+            else  links.push({source: activityNode, target: streamNode, value: d.value[activity]});
+          }
+          return links;
+        }, [])
+      };
+    });
+  })();
+
   var chartWidthFunc = function(root) {
     var width = root.getBoundingClientRect().width;
     var paddingLeft = Number(getComputedStyle(root).paddingLeft.slice(0,-2));
     var paddingRight = Number(getComputedStyle(root).paddingRight.slice(0,-2));
     return width-paddingLeft-paddingRight;
-  }
+  };
 
   window.onresize = function() {
     for(var key in charts) {
@@ -283,6 +323,16 @@ filterCouncilsFunc = function filterCouncils(){
   dc.disableTransitions = true;
   window.onresize();
   dc.disableTransitions = false;
+
+
+  // var sankey = d3.sankey()
+  //   .size([width, height])
+  //   .nodeWidth(15)
+  //   .nodePadding(10)
+  //   .nodes(nodes)
+  //   .links(links)
+  //   .layout(32);
+  // var path = sankey.link();
 
 
 });
