@@ -38,7 +38,8 @@ d3
   return d;
 })
 .get(function(error, data) {
-  var ndx = new crossfilter(data.filter(function(d) {return d.type !== "Other";}));
+  _data = data.filter(function(d) {return d.type !== "Other";});
+  var ndx = new crossfilter(_data);
   charts = {};
 /*******************************************************************************HEADER*/
   dc.dataCount('#dataCount').options({
@@ -58,7 +59,9 @@ d3
       if(d.type === "Income") return d.val;
       else return -d.val;
     }
-  );
+  ).order(function(val) {
+    return Math.abs(val);
+  });;
   charts.council = dc.rowChart('#councilChart')
     .dimension(council_dim)
     .group(council_group)
@@ -87,9 +90,10 @@ d3
         //Order curent filters
         //Append to output
         //Append currrentTop unless already added or 19 excedded to output
-
+        console.log(currentTop, output)
         currentTop.forEach(function(d){
-            if(output.length<19 && data[d.key]) {
+            console.log(data[d.key]);
+            if(output.length<19 && data[d.key]!==undefined) {
                 output.push(d);
                 delete data[d.key];
             }
@@ -120,7 +124,10 @@ d3
           if(min < 0) return min;
           else return d.value/25;
         }
-        else return council_group.top(1)[0].value + charts.council.x().invert(charts.council.margins().right/2);
+        else {
+          var padding = (charts.council.x() !== undefined) ? charts.council.x().invert(charts.council.margins().right/2) : 0;
+          return council_group.top(1)[0].value + padding;
+        }
       }
       return d.value;
     }).on('pretransition', function(chart) {
@@ -251,29 +258,31 @@ filterCouncilsFunc = function filterCouncils(){
     .title(function(d) {return d.key+": "+moneyTitle(d.value);});
   charts.activity.xAxis().tickFormat(moneyAxis);
 
-  for(var key in charts) {
-    var chart = charts[key];
-    if(Array.isArray(chart)) {
-      chart.apply(function(chart) {
-        chart.width(function(root) {
-          var width = root.getBoundingClientRect().width;
-          var paddingLeft = Number(getComputedStyle(root).paddingLeft.slice(0,-2));
-          var paddingRight = Number(getComputedStyle(root).paddingRight.slice(0,-2));
-          return width-paddingLeft-paddingRight;
-        });
-      });
-    } else {
-      chart.width(function(root) {
-        var width = root.getBoundingClientRect().width;
-        var paddingLeft = Number(getComputedStyle(root).paddingLeft.slice(0,-2));
-        var paddingRight = Number(getComputedStyle(root).paddingRight.slice(0,-2));
-        return width-paddingLeft-paddingRight;
-      });
-    }
+  var chartWidthFunc = function(root) {
+    var width = root.getBoundingClientRect().width;
+    var paddingLeft = Number(getComputedStyle(root).paddingLeft.slice(0,-2));
+    var paddingRight = Number(getComputedStyle(root).paddingRight.slice(0,-2));
+    return width-paddingLeft-paddingRight;
   }
 
+  window.onresize = function() {
+    for(var key in charts) {
+      var chart = charts[key];
+      if(Array.isArray(chart)) {
+        chart.apply(function(chart) {
+          chart.width(chartWidthFunc);
+        });
+      } else {
+        chart.width(chartWidthFunc);
+      }
+    }
+    dc.renderAll();
+  };
+
+
   dc.disableTransitions = true;
-  dc.renderAll();
+  window.onresize();
   dc.disableTransitions = false;
+
 
 });
