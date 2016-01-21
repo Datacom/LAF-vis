@@ -43,12 +43,11 @@ d3
   charts = {};
 
 /*******************************************************************************HEADER*/
-  dc.dataCount('#dataCount').options({
+  dc.dataCount('#resetAll').options({
     dimension: ndx,
     group: ndx.groupAll(),
     html: {
-      some: '<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
-          ' | <a href=\'javascript:dc.filterAll(); dc.renderAll();\'\'>Reset All</a>',
+      some: '<a class="btn btn-primary" href=\'javascript:dc.filterAll(); dc.renderAll();\'\'>Reset All</a>',
       all: 'All records selected. Please click on the graph to apply filters.'
     }
   });

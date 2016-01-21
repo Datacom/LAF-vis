@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.25/dc.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.25/dc.js"></script>
 
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css" type="text/css" >
+  <link rel="stylesheet" href="bootstrap.min.css" type="text/css" >
 
   <!--jQuery  -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
@@ -46,15 +46,21 @@
     </defs>
   </svg>
   <div class="row">
-    <div id="dataCount" class="col-xs-12"></div>
+    <div class="page-header">
+      <h1>Local Authority Financial Statistics income and expenditure by activity</h1>
+      <div id="resetAll" class="col-xs-12"></div>
+    </div>
+
     <div class="col-xs-3">
-      <div id="councilChart">
-        <legend>Local Authorities (showing Income-Expenditure)<a href="javascript:charts.council.filterAll();charts.council.redrawGroup();" class="reset" style="display:none">Reset</a><div id="bloodhound" class="input-group">
-            <input class="typeahead form-control" type="text" placeholder = "Name">
-            <input id ="councilSearch" type = "button" value = "Filter" onclick = "javascript:filterCouncilsFunc();">
-        </div></legend>
+      <div class="row">
+        <div id="councilChart" class="col-md-12">
+          <legend>Local Authorities (showing Income-Expenditure)<a href="javascript:charts.council.filterAll();charts.council.redrawGroup();" class="reset" style="display:none">Reset</a><div id="bloodhound" class="input-group">
+              <input class="typeahead form-control" type="text" placeholder = "Name">
+              <input id ="councilSearch" type = "button" value = "Filter" onclick = "javascript:filterCouncilsFunc();">
+          </div></legend>
+        </div>
+        <div id="activityChart" class="col-md-12"></div>
       </div>
-      <div id="activityChart"></div>
     </div>
     <div class="col-xs-9">
       <div class="row">

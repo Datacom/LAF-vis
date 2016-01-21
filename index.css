@@ -7,11 +7,14 @@
 }
 
 div.dc-chart {
-     float: none;
+     /*float: none;*/
 }
 
 legend {
+  margin-bottom: 0;
   width: 100%;
+  font-size: 1em;
+  font-weight: bold;
 }
 .reset {
   float:right;
@@ -80,4 +83,26 @@ legend {
 
 .link:hover {
   stroke-opacity: .5;
+}
+
+.page-header h1 {
+  margin-top:0;
+  text-align: center;
+}
+
+.page-header {
+  margin:0;
+  padding: 0;
+  position: relative;
+}
+#resetAll {
+  position: absolute;
+  top: 7px;
+  text-align: right;
+  padding-right: 25px;
+}
+
+input#councilSearch {
+    position: relative;
+    top: -12px;
 }
