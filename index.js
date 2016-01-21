@@ -61,7 +61,8 @@ d3
     }
   ).order(function(val) {
     return Math.abs(val);
-  });;
+  });
+
   charts.council = dc.rowChart('#councilChart')
     .dimension(council_dim)
     .group(council_group)
@@ -96,6 +97,8 @@ d3
                 delete data[d.key];
             }
         });
+
+        output = output.sort(function(a,b) {return d3.descending(Math.abs(a.value),Math.abs(b.value));});
         // data = data.filter(function(d) {return currentTopCouncils.indexOf(d.key)===-1;});
         if(Object.keys(data).length > 0) {
           output.push({
@@ -115,6 +118,10 @@ d3
     // })
     .title(function(d) {return d.key+": "+moneyTitle(d.value);})
     .elasticX(true)
+    .colorCalculator(function(d) {
+      if(d.key === "Others") return '#fff';
+      else return charts.council.colors()(charts.council.colorAccessor()(d));
+    })
     .valueAccessor(function(d) {
       if(d.others) {
         var maxVal;

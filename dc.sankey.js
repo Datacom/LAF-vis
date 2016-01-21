@@ -1,5 +1,5 @@
 dc.sankeyChart = function(parent, chartGroup) {
-  var _chart = dc.baseMixin({});
+  var _chart = dc.marginMixin(dc.baseMixin({}));
 
   var _sankey = d3.sankey()
     .nodeWidth(15)
@@ -31,8 +31,11 @@ dc.sankeyChart = function(parent, chartGroup) {
   };
 
   function drawChart(data) {
+    var m = _chart.margins();
+    var width = _chart.width() - m.top - m.bottom;
+    var height = _chart.height() - m.left - m.right;
     _sankey
-      .size([_chart.width(), _chart.height()])
+      .size([width, height])
       .nodes(data.nodes)
       .links(data.links)
       .layout(32);
@@ -45,6 +48,7 @@ dc.sankeyChart = function(parent, chartGroup) {
       });
     groups.enter()
       .append('g')
+      .attr("transform", "translate(" + m.top + "," + m.left + ")")
       .attr('class', function(d) {
         return d.key;
       });
@@ -66,7 +70,7 @@ dc.sankeyChart = function(parent, chartGroup) {
           return d.name;
         });
 
-        node.enter().append("g")
+      node.enter().append("g")
         .attr("class", "node")
         .attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")";
@@ -105,6 +109,11 @@ dc.sankeyChart = function(parent, chartGroup) {
             .attr("x", 6 + _sankey.nodeWidth())
             .attr("text-anchor", "start");
         });
+
+      node.classed({
+        "hidden":function(d){return d.value == 0 }
+      })
+
       node.transition().duration(_chart.transitionDuration())
         .attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")";
@@ -115,16 +124,17 @@ dc.sankeyChart = function(parent, chartGroup) {
               return d.dy;
             }).attr("width", _sankey.nodeWidth());
           rect.select("title")
-              .transition().duration(_chart.transitionDuration())
-              .text(function(d) {
-                return d.name + "\n" + _format(d.value);
-              });
+            .transition().duration(_chart.transitionDuration())
+            .text(function(d) {
+              return d.name + "\n" + _format(d.value);
+            });
           var text = d3.select(this).select('text');
           text.transition().duration(_chart.transitionDuration())
             .attr("y", function(d) {
               return d.dy / 2;
             });
         });
+
       node.exit().remove();
     } else if (type === "link") {
       var link = g.selectAll(".link")
@@ -137,8 +147,10 @@ dc.sankeyChart = function(parent, chartGroup) {
       link.enter().append("path")
         .attr("class", "link")
         .attr("d", _path)
-        .style("stroke-width", function(d) {
-          return Math.max(1, d.dy);
+        .style({
+          "stroke-width": function(d) {
+            return Math.max(1, d.dy);
+          }
         })
         .sort(function(a, b) {
           return b.dy - a.dy;
@@ -147,15 +159,19 @@ dc.sankeyChart = function(parent, chartGroup) {
           return d.source.name + " → " + d.target.name + "\n" + _format(d.value);
         });
 
-        link.transition().duration(_chart.transitionDuration())
-          .attr("d", _path)
-          .style("stroke-width", function(d) {
-            return Math.max(1, d.dy);
-          })
-          .sort(function(a, b) {
-            return b.dy - a.dy;
-          });
-        link.select("title").transition().duration(_chart.transitionDuration())
+      link.classed({
+        "hidden":function(d){return d.value == 0 }
+      })
+
+      link.transition().duration(_chart.transitionDuration())
+        .attr("d", _path)
+        .style("stroke-width", function(d) {
+          return Math.max(1, d.dy);
+        })
+        .sort(function(a, b) {
+          return b.dy - a.dy;
+        });
+      link.select("title").transition().duration(_chart.transitionDuration())
         .text(function(d) {
           return d.source.name + " → " + d.target.name + "\n" + _format(d.value);
         });
