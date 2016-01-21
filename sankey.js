@@ -173,7 +173,9 @@ d3.sankey = function() {
 
     function initializeNodeDepth() {
       var ky = d3.min(nodesByBreadth, function(nodes) {
-        return (size[1] - (nodes.length - 1) * nodePadding) / d3.sum(nodes, value);
+        var left = (size[1] - (nodes.length - 1) * nodePadding);
+        if (left === 0) return 0;
+        return left / d3.sum(nodes, value);
       });
 
       nodesByBreadth.forEach(function(nodes) {
@@ -192,7 +194,11 @@ d3.sankey = function() {
       nodesByBreadth.forEach(function(nodes, breadth) {
         nodes.forEach(function(node) {
           if (node.targetLinks.length) {
-            var y = d3.sum(node.targetLinks, weightedSource) / d3.sum(node.targetLinks, value);
+            var y = 0;
+            var left = d3.sum(node.targetLinks, weightedSource);
+            if (left!==0) {
+              y = left / d3.sum(node.targetLinks, value);
+            }
             node.y += (y - center(node)) * alpha;
           }
         });
@@ -207,7 +213,8 @@ d3.sankey = function() {
       nodesByBreadth.slice().reverse().forEach(function(nodes) {
         nodes.forEach(function(node) {
           if (node.sourceLinks.length) {
-            var y = d3.sum(node.sourceLinks, weightedTarget) / d3.sum(node.sourceLinks, value);
+            var left = d3.sum(node.sourceLinks, weightedTarget);
+            var y = (left===0) ? 0 : left / d3.sum(node.sourceLinks, value);
             node.y += (y - center(node)) * alpha;
           }
         });

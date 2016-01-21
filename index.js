@@ -66,7 +66,7 @@ d3
   charts.council = dc.rowChart('#councilChart')
     .dimension(council_dim)
     .group(council_group)
-    .height(600)
+    .height(500)
     .colors(d3.scale.category20())
     .data(function(group) {
         var data = group.all().reduce(function(obj, d) {
@@ -92,7 +92,7 @@ d3
         //Append to output
         //Append currrentTop unless already added or 19 excedded to output
         currentTop.forEach(function(d){
-            if(output.length<19 && data[d.key]!==undefined) {
+            if(output.length<17 && data[d.key]!==undefined) {
                 output.push(d);
                 delete data[d.key];
             }
@@ -118,26 +118,38 @@ d3
     .elasticX(true)
     .valueAccessor(function(d) {
       if(d.others) {
-        if(d.value<0) {
-          var min = d3.min(charts.council.data().slice(0,-1),dc.pluck('value'));
-          if(min < 0) return min;
-          else return d.value/25;
-        }
-        else {
-          var padding = (charts.council.x() !== undefined) ? charts.council.x().invert(charts.council.margins().right/2) : 0;
-          return council_group.top(1)[0].value + padding;
+        var maxVal;
+        d.fakeVal = false;
+        switch(Math.sign(d.value)) {
+          case -1:
+            maxVal = charts.council.data().filter(function(d) {return d.value<0;})[0].value;
+            if(maxVal > d.value) {
+              d.fakeVal = true;
+              return maxVal;
+            }
+            return d.value;
+          case 1:
+            maxVal = charts.council.data().filter(function(d) {return d.value>0;})[0].value;
+            if(maxVal < d.value) {
+              d.fakeVal = true;
+              return maxVal;
+            }
+            return d.value;
+          default: //shouldn't get here
+            return 0;
         }
       }
       return d.value;
     }).on('pretransition', function(chart) {
-      chart.root().selectAll('rect').filter(
-        function(d) {
-          return d.key==="Others";}
-      ).style({
+      chart.root().selectAll('rect').style({
         mask: function(d) {
-            return (d.value<0)? "url(#negativeFade)" : "url(#posiveFade)";
+          var noFade = d.key !== "Others" || !d.fakeVal;
+          if(noFade) return '';
+          return (d.value<0)? "url(#negativeFade)" : "url(#posiveFade)";
         },
-        stroke: 'black'
+        stroke: function(d) {
+            return (d.key === "Others")? 'black':'';
+        }
       });
     });
   charts.council.cappedValueAccessor = function(d, i) {
@@ -259,14 +271,6 @@ filterCouncilsFunc = function filterCouncils(){
 
 
   (function() {
-    var nodes = income.concat(expenditure).concat(
-      charts.activity.group().all().reduce(function(arr, ele) {
-        if(arr.indexOf(ele.key[1])===-1) {
-          arr.push(ele.key[1]);
-        }
-        return arr;
-      }, [])
-    ).map(function(name) {return {name: name};});
     var sankeyDim = ndx.dimension(dc.pluck('stream'));
     var sankeyGroup = sankeyDim.group().reduce(
       function(p,v) {
@@ -282,20 +286,28 @@ filterCouncilsFunc = function filterCouncils(){
       }
     );
     testChart = dc.sankeyChart('#test').dimension(sankeyDim).group(sankeyGroup).data(function(group) {
-      return {
-        nodes: nodes,
-        links: group.all().reduce(function(links, d) {
-          var isIncome = income.indexOf(d.key) !== -1;
-          for(var activity in d.value) {
-            var activityNode = nodes.map(dc.pluck('name')).indexOf(activity);
-            var streamNode = nodes.map(dc.pluck('name')).indexOf(d.key);
+      var nodes = [];
+      var links = group.all().reduce(function(links, d) {
+        var isIncome = income.indexOf(d.key) !== -1;
+        for(var activity in d.value) {
+          if(d.value !== 0) {
+            if(nodes.indexOf(activity) === -1) nodes.push(activity);
+            if(nodes.indexOf(d.key) === -1) nodes.push(d.key);
+            var activityNode = nodes.indexOf(activity);
+            var streamNode = nodes.indexOf(d.key);
             if(isIncome) links.push({source: streamNode, target: activityNode, value: d.value[activity]});
             else  links.push({source: activityNode, target: streamNode, value: d.value[activity]});
           }
-          return links;
-        }, [])
+        }
+        return links;
+      }, []);
+      return {
+        nodes: nodes.map(function(d) {return {name: d};}),
+        links: links
       };
-    });
+    }).width(function(c) {
+      return chartWidthFunc(c) - 5;
+    }).height(700);
   })();
 
   var chartWidthFunc = function(root) {

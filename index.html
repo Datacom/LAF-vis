@@ -48,24 +48,26 @@
   <div class="row">
     <div id="dataCount" class="col-xs-12"></div>
     <div class="col-xs-3">
-      <div id="yearChart"><legend>Year (showing Income-Expenditure)</legend></div>
       <div id="councilChart">
         <legend>Local Authorities (showing Income-Expenditure)<a href="javascript:charts.council.filterAll();charts.council.redrawGroup();" class="reset" style="display:none">Reset</a><div id="bloodhound" class="input-group">
             <input class="typeahead form-control" type="text" placeholder = "Name">
             <input id ="councilSearch" type = "button" value = "Filter" onclick = "javascript:filterCouncilsFunc();">
         </div></legend>
       </div>
+      <div id="activityChart"></div>
     </div>
-    <div class="col-xs-4">
+    <div class="col-xs-9">
       <div class="row">
-        <div id="incomeChart" class="col-xs-6"><legend>Income</legend></div>
-        <div id="expendiutreChart" class="col-xs-6"><legend>Expenditure</legend></div>
+        <div class="col-xs-7">
+          <div class="row">
+            <div id="incomeChart" class="col-xs-6"><legend>Income</legend></div>
+            <div id="expendiutreChart" class="col-xs-6"><legend>Expenditure</legend></div>
+          </div>
+        </div>
+        <div id="yearChart" class="col-xs-5"><legend>Year (showing Income-Expenditure)</legend></div>
+        <div id="test" class="col-xs-12"></div>
       </div>
-      <div id="activityChart" class="col-xs-12"></div>
     </div>
-  </div>
-  <div id="test" style="height:950px; width:90vw; margin:0 auto;">
-
   </div>
 </body>
 </html>
