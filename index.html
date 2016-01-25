@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8" />
+    <title>LAF-vis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="bundle.css" rel="stylesheet" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="float:left">
+      <defs>
+        <linearGradient id="positiveGradient">
+          <stop offset="0" stop-color="white" stop-opacity="1" />
+          <stop offset="0.8" stop-color="white" stop-opacity="1" />
+          <stop offset="1" stop-color="white" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="negativeGradient">
+          <stop offset="0" stop-color="white" stop-opacity="0" />
+          <stop offset="1" stop-color="white" stop-opacity="1" />
+        </linearGradient>
+        <mask id="positiveFade" maskContentUnits="objectBoundingBox">
+          <rect width="1" height="1" fill="url(#positiveGradient)"  />
+        </mask>
+        <mask id="negativeFade" maskContentUnits="objectBoundingBox">
+          <rect width="1" height="1" fill="url(#negativeGradient)"  />
+        </mask>
+      </defs>
+    </svg>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="page-header">
+          <h1>Local Authority Financial Statistics income and expenditure by activity</h1>
+          <div id="resetAll" class="col-xs-12"></div>
+        </div>
+        <div class="col-xs-3">
+          <div class="row">
+            <div id="localAuthorityChart" class="col-md-12">
+              <legend>Local Authorities (showing Income-Expenditure)
+                <input class="dropdown-input"/>
+                <button class="btn btn-sm btn-default dropdown-btn" type="button">
+                  <span class="caret"></span>
+                </button>
+                <!-- <a href="" class="reset" style="display:none">Reset</a> -->
+              </legend>
+            </div>
+            <div id="activityChart" class="col-md-12"></div>
+          </div>
+        </div>
+        <div class="col-xs-9">
+          <div class="row">
+            <div class="col-xs-7">
+              <div class="row">
+                <div id="incomeChart" class="col-xs-6"><legend>Income</legend></div>
+                <div id="expenditureChart" class="col-xs-6"><legend>Expenditure</legend></div>
+              </div>
+            </div>
+            <div id="yearChart" class="col-xs-5"><legend>Year (showing Income-Expenditure)</legend></div>
+            <div id="moneyFlowChart" class="col-xs-12"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="bundle.js"></script>
+  </body>
+</html>

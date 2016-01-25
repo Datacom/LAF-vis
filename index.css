@@ -1,0 +1,75 @@
+@import "./node_modules/awesomplete/awesomplete.css";
+@import "./node_modules/bootstrap/dist/css/bootstrap.css";
+@import "./node_modules/bootstrap/dist/css/bootstrap-theme.css";
+@import "./node_modules/dc/dc.css";
+
+
+.dc-chart g.row text, .dc-chart .pie-slice {
+  fill: black;
+}
+
+#activityChart rect {
+    stroke: grey;
+}
+
+svg {
+  /*shape-rendering: crispEdges;*/
+}
+
+.awesomplete input {
+  width: 100%;
+}
+.awesomplete {
+  vertical-align: middle;
+}
+.awesomplete, #localAuthorityChart > legend > input {
+  width: 90%;
+}
+
+.node rect {
+  /*cursor: move;*/
+  fill-opacity: .9;
+}
+
+.node text {
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff;
+}
+
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: .2;
+}
+
+.link:hover {
+  stroke-opacity: .5;
+}
+
+legend {
+  margin-bottom: 0;
+  width: 100%;
+  font-size: 1em;
+  font-weight: bold;
+}
+.reset {
+  float:right;
+}
+
+.page-header h1 {
+  margin-top:0;
+  text-align: center;
+}
+
+.page-header {
+  margin:0;
+  padding: 0;
+  position: relative;
+}
+#resetAll {
+  position: absolute;
+  top: 50%;
+  text-align: right;
+  padding-right: 25px;
+  transform: translateY(-50%);
+}

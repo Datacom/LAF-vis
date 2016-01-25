@@ -1,0 +1,43 @@
+{
+  "name": "LAF-vis",
+  "version": "1.0.0",
+  "description": "LAF vis",
+  "main": "index.js",
+  "scripts": {
+    "start": "budo . -d --serve bundle.js --live",
+    "build": "browserify . -o bundle.js -g uglifyify",
+    "test": "browserify test.js | smokestack | tap-spec",
+    "dist": "mkdir -p dist && bash -c 'cp *.{js,html,css} dist'",
+    "push": "gh-pages -d dist",
+    "deploy": "npm run build && npm run dist && npm run push"
+  },
+  "browserify": {
+    "transform": []
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Datacom/LAF-vis"
+  },
+  "author": "umbra268",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/Datacom/LAF-vis/issues"
+  },
+  "homepage": "https://github.com/Datacom/LAF-vis",
+  "dependencies": {
+    "awesomplete": "^1.0.0",
+    "bootstrap": "^3.3.6",
+    "dc": "^2.0.0-beta.25"
+  },
+  "devDependencies": {
+    "browserify": "^10.0.0",
+    "budo": "^4.0.0",
+    "css-import": "0.0.1",
+    "gh-pages": "^0.3.0",
+    "smokestack": "^3.3.0",
+    "tap-spec": "^4.0.2",
+    "tape": "^4.0.0",
+    "uglifyify": "^3.0.1",
+    "watchify": "^3.1.0"
+  }
+}
