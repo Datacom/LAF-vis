@@ -40,7 +40,7 @@ module.exports = function(ndx) {
         nodes: nodes.map(function(d) {return {name: d};}),
         links: links
       };
-    }).width(utils.chartWidth).height(600).margins({top: 0, right: 30, bottom: 0, left: 30});
+    }).width(utils.chartWidth).height(600).margins({top: 5, right: 10, bottom: 5, left: 10});
     // debugger;
     return chart;
 };

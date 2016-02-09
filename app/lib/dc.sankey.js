@@ -36,8 +36,8 @@ module.exports = function(parent, chartGroup) {
 
   function drawChart(data) {
     var m = _chart.margins();
-    var width = _chart.width() - m.top - m.bottom;
-    var height = _chart.height() - m.left - m.right;
+    var width = _chart.width() - m.left - m.right;
+    var height = _chart.height() - m.top - m.bottom;
     _sankey
       .size([width, height])
       .nodes(data.nodes)
@@ -52,13 +52,13 @@ module.exports = function(parent, chartGroup) {
       });
     groups.enter()
       .append('g')
-      .attr("transform", "translate(" + m.top + "," + m.left + ")")
+      .attr("transform", "translate(" + m.left + "," + m.top + ")")
       .attr('class', function(d) {
         return d.key;
       });
 
     groups.transition().duration(_chart.transitionDuration())
-      .attr("transform", "translate(" + m.top + "," + m.left + ")");
+      .attr("transform", "translate(" + m.left + "," + m.top + ")");
 
     groups.exit()
       .remove();
