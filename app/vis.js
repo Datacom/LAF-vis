@@ -32,8 +32,8 @@ module.exports = d3.csv('./data/LAF_14-09.csv')
     dimension: ndx,
     group: ndx.groupAll(),
     html: {
-      some: '<a class="btn btn-primary" href=\'javascript:dc.filterAll(); dc.renderAll();\'\'>Reset All</a>',
-      all: 'All records selected. Please click on the graph to apply filters.'
+      some: '<a class="btn" href=\'javascript:dc.filterAll(); dc.renderAll();\'\'><i class="fa fa-undo"></i> Reset All</a>',
+      all: ''
     }
   }).on('pretransition', function(chart) {
     var filters = dc.chartRegistry.list().map(function(chart) {return chart.filters();}).reduce(function(prev, cur) {return prev.concat(cur);});

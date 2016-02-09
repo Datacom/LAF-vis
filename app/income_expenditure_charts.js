@@ -16,7 +16,7 @@ module.exports = function(ndx) {
     dimension: dim,
     group: group,
     elasticX: true,
-    height: 200,
+    height: 300,
     width: utils.chartWidth,
     title: function(d) {return d.key+": "+sharedData.title(d.value);}
   }).apply(function(chart) { chart.xAxis().tickFormat(sharedData.axis).ticks(5); });

@@ -5,7 +5,7 @@ var dc = require("dc"),
   utils = require('./lib/utils'),
   sharedData = require('./shared_data'),
   modularSeach = require('./lib/modular-search');
-
+var cap = 24;
 module.exports = function(ndx) {
   var dim = ndx.dimension(dc.pluck('council'));
   var group = dim.group().reduceSum(
@@ -19,7 +19,7 @@ module.exports = function(ndx) {
   var chart = dc.rowChart('#localAuthorityChart')
     .dimension(dim)
     .group(group)
-    .height(475)
+    .height(650)
     .width(utils.chartWidth)
     .colors(d3.scale.category20())
     .data(function(group) {
@@ -28,8 +28,8 @@ module.exports = function(ndx) {
             return obj;
         },{});
 
-        var currentTop = group.top(19);//.map(dc.pluck('key'));
-        var currentTopCouncils = group.top(19).map(dc.pluck('key'));
+        var currentTop = group.top(cap);//.map(dc.pluck('key'));
+        var currentTopCouncils = group.top(cap).map(dc.pluck('key'));
         var currentFilters = chart.filters();
 
         var output = [];
@@ -44,9 +44,9 @@ module.exports = function(ndx) {
         });
         //Order curent filters
         //Append to output
-        //Append currrentTop unless already added or 19 excedded to output
+        //Append currrentTop unless already added or cap excedded to output
         currentTop.forEach(function(d){
-            if(output.length<17 && data[d.key]!==undefined) {
+            if(output.length<cap-2 && data[d.key]!==undefined) {
                 output.push(d);
                 delete data[d.key];
             }
@@ -91,6 +91,23 @@ module.exports = function(ndx) {
       }
       return d.value;
     }).on('pretransition', function(chart) {
+      chart.root().selectAll('g.row').each(function(d) {
+        console.log(chart);
+        var rect = d3.select(this).select('rect');
+        var rectWidth = rect.node().width.animVal.value;
+        console.log(rect.node().width.animVal.value, rect.node().width.baseVal.value, d);
+        var text = d3.select(this).select('text');
+        var textWidth = Number(text.style("width").slice(0,-2));
+        var diff = rectWidth - textWidth;
+        if(diff < 0) { //TODO: dchange this to if text will spill over side of svg.
+          //TODO: Center text if nessacery
+          var width = Math.abs(chart.x()(0) - chart.x()(chart.valueAccessor()(d))) - 5;
+          text.attr('text-anchor','end')
+              .attr('x',width);
+        } else {
+          text.attr('text-anchor','start').attr('x',5);
+        }
+      });
       chart.root().selectAll('rect').style({
         mask: function(d) {
           var noFade = d.key !== "Others" || !d.fakeVal;

@@ -26,7 +26,7 @@ module.exports = function(ndx) {
     })
     .twoLabels(false)
     .columnLabels(['Income', 'Expenditure'])
-    .height(390)
+    .height(300)
     .width(utils.chartWidth)
     .title(function(d) {
       return d.key + ": " + sharedData.title(d.value);

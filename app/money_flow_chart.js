@@ -20,7 +20,7 @@ module.exports = function(ndx) {
       }
     );
 
-  return sankeyChart('#moneyFlowChart').dimension(dim).group(group).data(function(group) {
+  var chart = sankeyChart('#moneyFlowChart').dimension(dim).group(group).data(function(group) {
       var nodes = [];
       var links = group.all().reduce(function(links, d) {
         var isIncome = sharedData.income.indexOf(d.key) !== -1;
@@ -40,5 +40,7 @@ module.exports = function(ndx) {
         nodes: nodes.map(function(d) {return {name: d};}),
         links: links
       };
-    }).width(utils.chartWidth).height(695);
+    }).width(utils.chartWidth).height(600).margins({top: 0, right: 30, bottom: 0, left: 30});
+    // debugger;
+    return chart;
 };
