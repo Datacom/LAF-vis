@@ -1,11 +1,13 @@
 var dc = require('dc'),
-    d3 = require('d3');
+    d3 = require('d3'),
+    _ = require('underscore');
 
 module.exports = function(chartType, anchors, dataInWhichChart, reset_id) {
   function filter_other_charts(chart) {
     var filters = chart.filters();
     charts.forEach(function(chart) {
       chart.on('filtered.filter_other_charts');
+      //Select values that are only in 1 of the 2 arrays
       _(filters).difference(chart.filters()).concat(
         _(chart.filters()).difference(filters)
       ).forEach(function(filter) {

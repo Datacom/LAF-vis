@@ -20,6 +20,7 @@ module.exports = function(ndx) {
     width: utils.chartWidth,
     title: function(d) {return d.key+": "+sharedData.title(d.value);}
   }).apply(function(chart) { chart.xAxis().tickFormat(sharedData.axis).ticks(5); });
-
+  charts.setOnFiltered(true);
+  console.log(true);
   return charts;
 };

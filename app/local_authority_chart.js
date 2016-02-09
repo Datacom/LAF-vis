@@ -95,12 +95,13 @@ module.exports = function(ndx) {
         mask: function(d) {
           var noFade = d.key !== "Others" || !d.fakeVal;
           if(noFade) return '';
-          return (d.value<0)? "url(#negativeFade)" : "url(#posiveFade)";
+          return (d.value<0)? "url(#negativeFade)" : "url(#positiveFade)";
         },
         stroke: function(d) {
             return (d.key === "Others")? 'black':'';
         }
       });
+
     });
   chart.cappedValueAccessor = function(d, i) {
     return chart.valueAccessor()(d, i);
