@@ -20,7 +20,10 @@ module.exports = function(ndx) {
       }
     );
 
-  var chart = sankeyChart('#moneyFlowChart').dimension(dim).group(group).data(function(group) {
+  var chart = sankeyChart('#moneyFlowChart')
+  .dimension(dim)
+  .group(group)
+  .data(function(group) {
       var nodes = [];
       var links = group.all().reduce(function(links, d) {
         var isIncome = sharedData.income.indexOf(d.key) !== -1;
@@ -40,7 +43,16 @@ module.exports = function(ndx) {
         nodes: nodes.map(function(d) {return {name: d};}),
         links: links
       };
-    }).width(utils.chartWidth).height(600).margins({top: 5, right: 10, bottom: 5, left: 10});
+    })
+    .colors(function(d) {
+      // console.log(sharedData);
+      if (sharedData.income.indexOf(d) >= 0) return sharedData.incomeScale(d);
+      else if (sharedData.expenditure.indexOf(d) >= 0) return sharedData.expenditureScale(d);
+      else return sharedData.activityScale(d);
+    })
+    .width(utils.chartWidth)
+    .height(560)
+    .margins({top: 5, right: 15, bottom: 5, left: 10});
     // debugger;
     return chart;
 };

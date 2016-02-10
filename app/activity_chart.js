@@ -14,6 +14,7 @@ module.exports = function(ndx) {
     .dimension(dim)
     .group(group)
     .elasticX(true)
+    .colors(sharedData.activityScale)
     .leftColumn(function(d) {
       return d.key[0] == 'Income';
     })
@@ -28,6 +29,7 @@ module.exports = function(ndx) {
     .columnLabels(['Income', 'Expenditure'])
     .height(300)
     .width(utils.chartWidth)
+    .margins({top:5, left: 10, right: 10, bottom: 20})
     .title(function(d) {
       return d.key + ": " + sharedData.title(d.value);
     });

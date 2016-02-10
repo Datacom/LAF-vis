@@ -3,13 +3,12 @@ var dc = require('dc'),
   sankey = require('./sankey');
 
 module.exports = function(parent, chartGroup) {
-  var _chart = dc.marginMixin(dc.baseMixin({}));
+  var _chart = dc.colorMixin(dc.marginMixin(dc.baseMixin({})));
 
   var _sankey = sankey()
     .nodeWidth(15)
     .nodePadding(10);
   var _path = _sankey.link();
-  var _color = d3.scale.category20();
   var _format = d3.format('$,');
 
   _chart._doRedraw = function() {
@@ -37,6 +36,7 @@ module.exports = function(parent, chartGroup) {
   function drawChart(data) {
     var m = _chart.margins();
     var width = _chart.width() - m.left - m.right;
+
     var height = _chart.height() - m.top - m.bottom;
     _sankey
       .size([width, height])
@@ -66,7 +66,12 @@ module.exports = function(parent, chartGroup) {
     groups.each(populateGroup);
   }
 
+  _chart.colorAccessor(function(d) {
+    return d;
+  });
+
   function populateGroup(data) {
+    var _color = _chart.colorCalculator();
     var type = data.key.slice(0, -1);
     var g = d3.select(this);
     if (type === "node") {
@@ -89,7 +94,7 @@ module.exports = function(parent, chartGroup) {
             })
             .attr("width", _sankey.nodeWidth())
             .style("fill", function(d) {
-              return d.color = _color(d.name.replace(/ .*/, ""));
+              return _color(d.name);
             })
             .style("stroke", function(d) {
               return d3.rgb(d.color).darker(2);

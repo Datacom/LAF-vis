@@ -23,7 +23,7 @@ svg {
   vertical-align: middle;
 }
 .awesomplete, #localAuthorityChart > legend > input {
-  width: 85%;
+  width: 91.5%;
 }
 
 .node rect {
@@ -42,6 +42,7 @@ svg {
   stroke: #000;
   stroke-opacity: .2;
 }
+
 
 .link:hover {
   stroke-opacity: .5;
@@ -65,6 +66,9 @@ legend {
   margin: 0;
   vertical-align: middle;
   font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .page-header {
@@ -91,6 +95,7 @@ legend {
   border-radius: 1px;
   font-family: 'Open Sans';
   font-weight: bold;
+  line-height: 0;
 }
 #resetAll a i {
   margin-right: 6px;
@@ -103,21 +108,54 @@ body {
   float:none;
 }
 .card {
-  outline: 1px solid black;
-  background: #E7E7E7;
-  /*margin:5px;*/
+  background: white;
+  box-shadow: 0 0 1px #000;
 }
 
 #yearChart.card, #moneyFlowChart.card {
   margin-bottom: 15px;
 }
 
-.col-xs-3 > .row > div {
-  padding-right: 7.5px;
+@media only screen and (min-width : 992px) {
+  .col-md-3 > .row > div {
+    padding-right: 7.5px;
+  }
+  .col-md-9 > .row > div {
+    padding-left: 7.5px;
+  }
+  .col-md-9 > .row > div > div.row > div.col-md-6 {
+    padding: 0;
+  }
 }
-.col-xs-9 > .row > div {
-  padding-left: 7.5px;
+
+@media only screen and (max-width : 992px) {
+  #incomeChart.card,  #activityChart.card, #expenditureChart.card {
+    margin-bottom:15px;
+  }
+  div#moneyFlowChart {
+    margin-top: 15px;
+  }
 }
-.col-xs-9 > .row > div > div.row > div.col-md-6 {
+
+#moneyFlowChart .node {
+    cursor: default;
+}
+
+.card legend {
+  background: #E7E7E7;
+  padding: 5px;
+}
+
+div.awesomplete mark:empty {
+  background: none;
+  display: none;
+}
+div.awesomplete mark {
+  background: none;
+  text-decoration: underline;
   padding: 0;
+  font-style: oblique;
+}
+div.awesomplete li:hover mark {
+  background: none;
 }

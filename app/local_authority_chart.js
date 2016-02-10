@@ -7,6 +7,11 @@ var dc = require("dc"),
   modularSeach = require('./lib/modular-search');
 var cap = 24;
 module.exports = function(ndx) {
+  var oldFunc = 'if (extent[0] > 0) {\n extent[0] = 0;\n }';
+
+  var rowChartCode = dc.rowChart.toString().replace(/ +/g,' ').replace(oldFunc, oldFunc+'\nif(extent[1]<0){\nextent[1]=0;\n}');
+  var newRowChart = eval('('+rowChartCode+')');
+
   var dim = ndx.dimension(dc.pluck('council'));
   var group = dim.group().reduceSum(
     function(d) {
@@ -16,12 +21,13 @@ module.exports = function(ndx) {
   ).order(function(val) {
     return Math.abs(val);
   });
-  var chart = dc.rowChart('#localAuthorityChart')
+  var chart = newRowChart('#localAuthorityChart')
     .dimension(dim)
     .group(group)
-    .height(650)
+    .height(599)
     .width(utils.chartWidth)
     .colors(d3.scale.category20())
+    .margins({top: 5, left:10, right:10, bottom: 20})
     .data(function(group) {
         var data = group.all().reduce(function(obj, d) {
             obj[d.key] = d.value;
@@ -90,24 +96,36 @@ module.exports = function(ndx) {
         }
       }
       return d.value;
-    }).on('pretransition', function(chart) {
-      chart.root().selectAll('g.row').each(function(d) {
-        console.log(chart);
-        var rect = d3.select(this).select('rect');
-        var rectWidth = rect.node().width.animVal.value;
-        console.log(rect.node().width.animVal.value, rect.node().width.baseVal.value, d);
-        var text = d3.select(this).select('text');
-        var textWidth = Number(text.style("width").slice(0,-2));
-        var diff = rectWidth - textWidth;
-        if(diff < 0) { //TODO: dchange this to if text will spill over side of svg.
-          //TODO: Center text if nessacery
-          var width = Math.abs(chart.x()(0) - chart.x()(chart.valueAccessor()(d))) - 5;
-          text.attr('text-anchor','end')
-              .attr('x',width);
-        } else {
-          text.attr('text-anchor','start').attr('x',5);
-        }
-      });
+    })
+    .on('renderlet', function(chart) {
+      // chart.root().selectAll('g.row').each(function(d, i) {
+      //   // console.log(chart);
+      //   var svgRect = this.parentNode.parentNode.getBoundingClientRect();
+      //   var text = d3.select(this).select('text');
+      //   var textRect = text.node().getBoundingClientRect();
+      //   // chart.margins().right
+      //   if(textRect.right > svgRect.right) {
+      //     text.attr('x', svgRect.right - textRect.right - 10);
+      //   } else {
+      //     text.attr('x', 10);
+      //   }
+      // });
+    })
+    .on('pretransition', function(chart) {
+      // chart.root().selectAll('g.row').each(function(d, i) {
+      //   // console.log(chart);
+      //   var svgRect = this.parentNode.parentNode.getBoundingClientRect();
+      //   var duration = dc.disableTransitions ? 0 : chart.transitionDuration();
+      //   d3.select(this).select('text').transition(duration).attr('x', function(d) {
+      //     var textRect = this.getBoundingClientRect();
+      //     if(textRect.right > svgRect.right) {
+      //       return svgRect.right - textRect.right;
+      //     } else {
+      //       return 10;
+      //     }
+      //   });
+      // });
+
       chart.root().selectAll('rect').style({
         mask: function(d) {
           var noFade = d.key !== "Others" || !d.fakeVal;

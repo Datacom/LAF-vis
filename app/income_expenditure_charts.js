@@ -18,8 +18,12 @@ module.exports = function(ndx) {
     elasticX: true,
     height: 300,
     width: utils.chartWidth,
+    margins: {top:5, left: 10, right: 10, bottom: 20},
     title: function(d) {return d.key+": "+sharedData.title(d.value);}
-  }).apply(function(chart) { chart.xAxis().tickFormat(sharedData.axis).ticks(5); });
+  }).apply(function(chart, i) {
+    chart.xAxis().tickFormat(sharedData.axis).ticks(5);
+    chart.colors((i === 0)? sharedData.incomeScale : sharedData.expenditureScale);
+  });
   charts.setOnFiltered(true);
   console.log(true);
   return charts;

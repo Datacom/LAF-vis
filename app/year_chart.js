@@ -11,7 +11,7 @@ module.exports = function(ndx) {
       else return -d.val;
     }
   );
-  
+
   var chart = dc.barChart('#yearChart')
     .dimension(dim)
     .group(group)
@@ -21,10 +21,11 @@ module.exports = function(ndx) {
     .width(utils.chartWidth)
     .margins({
       top: 10,
-      right: 20,
-      bottom: 30,
-      left: 45
+      right: 10,
+      bottom: 20,
+      left: 50
     })
+    .colorCalculator(function() {return '#D4AF37';})
     .elasticY(true)
     .title(function(d) {
       return d.key + ": " + sharedData.title(d.value);
