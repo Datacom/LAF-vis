@@ -1,7 +1,7 @@
-@import "./node_modules/awesomplete/awesomplete.css";
-@import "./node_modules/bootstrap/dist/css/bootstrap.css";
-@import "./node_modules/bootstrap/dist/css/bootstrap-theme.css";
-@import "./node_modules/dc/dc.css";
+@import "./../../node_modules/awesomplete/awesomplete.css";
+@import "./../../node_modules/bootstrap/dist/css/bootstrap.css";
+@import "./../../node_modules/bootstrap/dist/css/bootstrap-theme.css";
+@import "./../../node_modules/dc/dc.css";
 
 
 .dc-chart g.row text, .dc-chart .pie-slice {
@@ -69,6 +69,7 @@ legend {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  margin-right: 5em;
 }
 
 .page-header {
