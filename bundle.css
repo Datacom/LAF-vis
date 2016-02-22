@@ -7794,13 +7794,14 @@ svg {
   vertical-align: middle;
 }
 .awesomplete, #localAuthorityChart > legend > input {
-  width: 90%;
+  width: 91.5%;
 }
 
 .node rect {
   /*cursor: move;*/
   fill-opacity: .9;
 }
+
 
 .node text {
   pointer-events: none;
@@ -7812,6 +7813,7 @@ svg {
   stroke: #000;
   stroke-opacity: .2;
 }
+
 
 .link:hover {
   stroke-opacity: .5;
@@ -7828,19 +7830,108 @@ legend {
 }
 
 .page-header h1 {
-  margin-top:0;
-  text-align: center;
+  font-family: 'Open Sans';
+  font-size: 18pt;
+  color: white;
+  text-align: left;
+  margin: 0;
+  vertical-align: middle;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 5em;
 }
 
 .page-header {
-  margin:0;
-  padding: 0;
-  position: relative;
+    margin: 0;
+    background-color: #1776B6;
+    height: 50px;
+    padding: 10px;
+    position: relative;
+    margin-bottom: 15px;
 }
+
 #resetAll {
   position: absolute;
   top: 50%;
   text-align: right;
-  padding-right: 25px;
+  right: 0;
   transform: translateY(-50%);
+  width: inherit;
+}
+#resetAll a {
+  background: none;
+  border-color: #fff;
+  color: #fff;
+  border-radius: 1px;
+  font-family: 'Open Sans';
+  font-weight: bold;
+  line-height: 0;
+}
+#resetAll a i {
+  margin-right: 6px;
+}
+
+body {
+  background-color: #F1F1F1;
+}
+.card.dc-chart {
+  float:none;
+}
+.card {
+  background: white;
+  box-shadow: 0 0 1px #000;
+}
+
+#yearChart.card, #moneyFlowChart.card {
+  margin-bottom: 15px;
+}
+
+@media only screen and (min-width : 992px) {
+  .col-md-3 > .row > div {
+    padding-right: 7.5px;
+  }
+  .col-md-9 > .row > div {
+    padding-left: 7.5px;
+  }
+  .col-md-9 > .row > div > div.row > div.col-md-6 {
+    padding: 0;
+  }
+}
+
+@media only screen and (max-width : 992px) {
+  #incomeChart.card,  #activityChart.card, #expenditureChart.card {
+    margin-bottom:15px;
+  }
+  div#moneyFlowChart {
+    margin-top: 15px;
+  }
+}
+
+#moneyFlowChart .node {
+    cursor: default;
+}
+
+.card legend {
+  background: #E7E7E7;
+  padding: 5px;
+}
+
+div.awesomplete mark:empty {
+  background: none;
+  display: none;
+}
+div.awesomplete mark {
+  background: none;
+  text-decoration: underline;
+  padding: 0;
+  font-style: oblique;
+}
+div.awesomplete li:hover mark {
+  background: none;
+}
+
+a.reset {
+    cursor: pointer;
 }
