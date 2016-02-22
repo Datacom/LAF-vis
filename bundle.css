@@ -7774,6 +7774,16 @@ g.dc-legend-item.fadeout {
 }
 
 
+.loading {
+  background-image: url("spinner.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  min-height: 250px;
+}
+
+.loading * {
+  visibility: hidden;
+}
 
 .dc-chart g.row text, .dc-chart .pie-slice {
   fill: black;

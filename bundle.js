@@ -1562,6 +1562,7 @@ module.exports = d3.csv('./data/LAF_14-09.csv')
 
   dc.disableTransitions = true;
   dc.renderAll();
+  d3.selectAll('.loading').classed('loading', false);
   dc.disableTransitions = false;
 });
 
