@@ -3,6 +3,16 @@
 @import "./../../node_modules/bootstrap/dist/css/bootstrap-theme.css";
 @import "./../../node_modules/dc/dc.css";
 
+.loading {
+  background-image: url("spinner.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  min-height: 250px;
+}
+
+.loading * {
+  visibility: hidden;
+}
 
 .dc-chart g.row text, .dc-chart .pie-slice {
   fill: black;
