@@ -16,7 +16,7 @@ module.exports = function(chartType, anchors, dataInWhichChart, reset_id) {
       chart.on('filtered.filter_other_charts', filter_other_charts);
     });
     hasFilters = filters.length !== 0;
-    d3.selectAll(reset_id).classed("hidden", !hasFilters);
+    if(reset_id !== undefined) d3.selectAll(reset_id).classed("hidden", !hasFilters);
     dc.redrawAll();
   }
 
@@ -32,7 +32,7 @@ module.exports = function(chartType, anchors, dataInWhichChart, reset_id) {
     return chart;
   });
 
-  d3.selectAll(reset_id).on('click',function() {charts[0].filterAll();});
+  if(reset_id !== undefined) d3.selectAll(reset_id).on('click',function() {charts[0].filterAll();});
 
   var dim;
   charts.options = function(options) {
@@ -51,7 +51,22 @@ module.exports = function(chartType, anchors, dataInWhichChart, reset_id) {
       chart.on('filtered.filter_other_charts', bool? filter_other_charts : undefined);
     });
     hasFilters = charts[0].filters().length !== 0;
-    d3.selectAll(reset_id).classed("hidden", !hasFilters);
+    if(reset_id !== undefined) d3.selectAll(reset_id).classed("hidden", !hasFilters);
   };
+
+  if(reset_id === undefined) {
+    charts.apply(function(chart) {
+      var _chart = chart;
+      chart.root().select('.reset').on('click', function() {
+        var filters = _chart.filters();
+        _chart.data().map(_chart.keyAccessor()).forEach(function(key) {
+          if(filters.indexOf(key) !== -1) _chart.filter(key);
+        });
+        _chart.redrawGroup();
+      });
+      // chart.filters()
+      // chart.filter()
+    });
+  }
   return charts;
 };

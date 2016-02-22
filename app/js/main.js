@@ -32,7 +32,7 @@ module.exports = d3.csv('./data/LAF_14-09.csv')
     dimension: ndx,
     group: ndx.groupAll(),
     html: {
-      some: '<a class="btn" href=\'javascript:return false;\'\'><i class="fa fa-undo"></i> Reset All</a>',
+      some: '<a class="btn" href=\'#\'><i class="fa fa-undo"></i> Reset All</a>',
       all: ''
     }
   }).on('pretransition', function(chart) {
@@ -46,16 +46,14 @@ module.exports = d3.csv('./data/LAF_14-09.csv')
   charts.forEach(function(chart, idx) {
     var _chart = chart(ndx);
 
-    // if(!Array.isArray(_chart)) {
-    //   var link = _chart.root().select('.reset').node();
-    //   if(link !== null) {
-    //     link.onClick = function() {
-    //       console.log('test');
-    //       _chart.filterAll();
-    //       dc.redrawAll();
-    //     };
-    //   }
-    // }
+    if(!Array.isArray(_chart)) {
+      var link = _chart.root().select('.reset');
+      link.on('click', function() {
+        console.log('test');
+        _chart.filterAll();
+        dc.redrawAll();
+      });
+    }
   });
 
   dc.disableTransitions = true;

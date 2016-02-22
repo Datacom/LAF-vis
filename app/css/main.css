@@ -160,3 +160,7 @@ div.awesomplete mark {
 div.awesomplete li:hover mark {
   background: none;
 }
+
+a.reset {
+    cursor: pointer;
+}

@@ -12,7 +12,7 @@ module.exports = function(ndx) {
     '#expenditureChart'
   ], function(d) {
     return (sharedData.income.indexOf(d.key) !== -1) ? 0 : 1;
-  }, '#incomeExpenditureReset').options({
+  }).options({
     dimension: dim,
     group: group,
     elasticX: true,
